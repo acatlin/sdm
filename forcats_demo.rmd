@@ -1,0 +1,62 @@
+---
+title: 'tidyverse: using forcats to improve your ggplots'
+author: "catlin"
+date: "2/10/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+Note that although forcats is part of the "tidyverse", it is not automatically loaded when you run `library(tidyverse)`
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(forcats)
+```
+
+# Handy forcats functions for ggplot2
+
+## Comparing followers of world religions
+
+Source: https://en.wikipedia.org/wiki/List_of_religious_populations
+
+I was looking for a simple dataset with count data for many items to demonstrate some basic forcats functions that are useful when creating plots.
+
+```{r, warning=FALSE}
+religions = read_csv("https://raw.githubusercontent.com/acatlin/data/master/religions.csv", 
+                  col_names = FALSE) %>% 
+    rename(religion = X1, followers = X2) %>% 
+    mutate(millions_of_followers = followers/1000000.0) %>% 
+  select(religion, millions_of_followers)
+
+religions
+```
+
+## 1A: basic ggplot
+
+Q: What are the most followed religions?
+A: Use ggplot to compare religious populations
+
+You can also embed plots, for example:
+
+```{r}
+religions %>% 
+  ggplot(aes(x = religion, y = millions_of_followers)) + 
+    geom_col(fill = "lightblue") + 
+    labs(x = "religion", y = "millions of followers", 
+           caption = "https://en.wikipedia.org/wiki/List_of_religious_populations") 
+```
+ 
+## 1B: How do I flip coordinates?
+
+```{r}
+religions %>% 
+  ggplot(aes(x = religion, y = millions_of_followers)) + 
+    geom_col(fill = "lightblue") + 
+    labs(x = "religion", y = "millions of followers", 
+           caption = "https://en.wikipedia.org/wiki/List_of_religious_populations") + coord_flip()
+```
+
+
